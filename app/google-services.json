@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "1083147791728",
+    "firebase_url": "https://ctchat-f24a8.firebaseio.com",
+    "project_id": "ctchat-f24a8",
+    "storage_bucket": "ctchat-f24a8.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1083147791728:android:8ca0170ef2dfd941",
+        "android_client_info": {
+          "package_name": "com.callan.taylor.ctchat"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1083147791728-a3ssjhel5jbussjl3hi06s4pautgqqak.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.callan.taylor.ctchat",
+            "certificate_hash": "edae6576e8c0e3615fee973103fce3e010628760"
+          }
+        },
+        {
+          "client_id": "1083147791728-qulcd9ksld9d8563e9otf5ln0e5bh6kp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBAa8tJsv_R_LDn_pghu3A3e6x1ZYFN3sg"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1083147791728-qulcd9ksld9d8563e9otf5ln0e5bh6kp.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
