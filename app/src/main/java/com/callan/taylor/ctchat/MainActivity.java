@@ -101,6 +101,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         };
+        Log.e("on Create", "called");
     }
 
 
@@ -115,8 +116,8 @@ public class MainActivity extends AppCompatActivity {
                 finish();
             }
         }
-    }
 
+    }
 
     @Override
     protected void onResume() {
@@ -126,6 +127,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+
     @Override
     protected void onPause() {
         super.onPause();
@@ -133,17 +135,7 @@ public class MainActivity extends AppCompatActivity {
             mFirebaseAuth.removeAuthStateListener(mAuthStateListener);
         }
         dettachDatabaseReadListener();
-        removeMessagesFromView();
-    }
-
-
-    private void removeMessagesFromView() {
-        for (int i = 0; i < mMessages.size(); i++) {
-            mMessages.remove(i);
-        }
-        mMessageRVAdapter.notifyDataSetChanged();
-        mMessageRVAdapter = new MessagesRVAdapter(this, mMessages);
-        mMessageRV.setAdapter(mMessageRVAdapter);
+        mMessages = null;
     }
 
 
@@ -214,7 +206,7 @@ public class MainActivity extends AppCompatActivity {
     public void onSignOutCleanup() {
         mUsername = "";
         mRecipient.setText("");
-        removeMessagesFromView();
+        mMessages = null;
         dettachDatabaseReadListener();
         mUsernameDisplay.setText("");
     }
