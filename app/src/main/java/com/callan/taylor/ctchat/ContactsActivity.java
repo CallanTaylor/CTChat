@@ -12,6 +12,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.firebase.ui.auth.AuthUI;
@@ -44,6 +46,7 @@ public class ContactsActivity extends AppCompatActivity {
     private RecyclerView mContactsRV;
     private ContactsRVAdapter mContactsRVAdapter;
     private List<String> mContatcs;
+    private EditText mSearchContacts;
 
 
     /**
@@ -69,6 +72,7 @@ public class ContactsActivity extends AppCompatActivity {
         mFirebaseDatabase = FirebaseDatabase.getInstance();
         mFirebaseAuth = FirebaseAuth.getInstance();
 
+        mSearchContacts = (EditText) findViewById(R.id.search_contacts);
 
         mContactsRV = (RecyclerView) findViewById(R.id.rv_contacts_list_view);
         mContactsRV.setLayoutManager(new LinearLayoutManager(this));
@@ -158,7 +162,6 @@ public class ContactsActivity extends AppCompatActivity {
     }
 
 
-
     public void attatchContactsDatabaseRaedListener() {
         if (mContatcsChildEventListener == null) {
             mContatcsChildEventListener = new ChildEventListener() {
@@ -167,16 +170,12 @@ public class ContactsActivity extends AppCompatActivity {
                     mContactsRVAdapter = new ContactsRVAdapter(ContactsActivity.this, mContatcs);
                     mContactsRV.setAdapter(mContactsRVAdapter);
                 }
-
                 @Override
                 public void onChildChanged(DataSnapshot dataSnapshot, String s) { }
-
                 @Override
                 public void onChildRemoved(DataSnapshot dataSnapshot) { }
-
                 @Override
                 public void onChildMoved(DataSnapshot dataSnapshot, String s) { }
-
                 @Override
                 public void onCancelled(DatabaseError databaseError) { }
             };
@@ -235,6 +234,21 @@ public class ContactsActivity extends AppCompatActivity {
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
+        }
+    }
+
+
+    //TODO: sort mContacts to reduce search time
+    public void onClickAddContact(View view) {
+        String searchForContact = mSearchContacts.getText().toString();
+        if (!searchForContact.equals("")) {
+            for (String contact: mContatcs) {
+                if (searchForContact.equals(contact)) {
+                    mContactsRVAdapter = new ContactsRVAdapter(ContactsActivity.this, mContatcs);
+                    mContactsRV.setAdapter(mContactsRVAdapter);
+                    mContactsRVAdapter.notifyDataSetChanged();
+                }
+            }
         }
     }
 }

@@ -18,8 +18,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/current_user"
-            android:textSize="30dp"
-            android:layout_gravity="center"/>
+            android:textSize="30sp"
+            android:gravity="center"/>
 
 
     </LinearLayout>
