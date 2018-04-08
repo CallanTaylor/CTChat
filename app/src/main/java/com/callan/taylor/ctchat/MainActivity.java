@@ -38,7 +38,7 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MainActivity";
-    private EditText mRecipient;
+    private String mCurrentContact;
     private EditText mMessageText;
     private TextView mUsernameDisplay;
     private String mUsername = null;
@@ -62,7 +62,12 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mRecipient = (EditText) findViewById(R.id.send_to);
+        Intent intentThatStartedThisActivity = getIntent();
+
+        if (intentThatStartedThisActivity.hasExtra(Intent.EXTRA_TEXT)) {
+            mCurrentContact = intentThatStartedThisActivity.getStringExtra(Intent.EXTRA_TEXT);
+        }
+
         mMessageText = (EditText) findViewById(R.id.messageEditText);
         mUsernameDisplay = (TextView) findViewById(R.id.current_user);
         //mMessageListView = (ListView) findViewById(R.id.message_list_view);
@@ -76,12 +81,11 @@ public class MainActivity extends AppCompatActivity {
         // Initialize message ListView and its adapter
         mMessages = new ArrayList<>();
         // mMessageAdapter = new MessageAdapter(this, R.layout.message_list_item, messages);
-        //mMessageListView.setAdapter(mMessageAdapter);
+        // mMessageListView.setAdapter(mMessageAdapter);
 
         mMessagesDatabaseReference = mFirebaseDatabase.getReference().child("messages");
         final List<AuthUI.IdpConfig> providers = Arrays.asList(new AuthUI.IdpConfig.EmailBuilder().build(),
                 new AuthUI.IdpConfig.GoogleBuilder().build());
-
 
         mAuthStateListener = new FirebaseAuth.AuthStateListener() {
             @Override
@@ -101,7 +105,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         };
-        Log.e("on Create", "called");
+
     }
 
 
@@ -116,13 +120,13 @@ public class MainActivity extends AppCompatActivity {
                 finish();
             }
         }
-
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         mFirebaseAuth.addAuthStateListener(mAuthStateListener);
+        mUsernameDisplay.setText(mCurrentContact);
         Toast.makeText(this, "Resume", Toast.LENGTH_SHORT).show();
     }
 
@@ -135,14 +139,15 @@ public class MainActivity extends AppCompatActivity {
             mFirebaseAuth.removeAuthStateListener(mAuthStateListener);
         }
         dettachDatabaseReadListener();
+        mUsernameDisplay.setText("");
         mMessages = null;
     }
 
 
     public void onClickSendMessage(View view) {
         if (!(mMessageText.getText().toString().equals("") &&
-                mRecipient.getText().toString().equals(""))) {
-            Messages message = new Messages(mUsername, mRecipient.getText().toString(),
+                mCurrentContact.equals(""))) {
+            Messages message = new Messages(mUsername, mCurrentContact,
                     mMessageText.getText().toString(), false);
             mMessagesDatabaseReference.push().setValue(message);
             mMessageText.setText("");
@@ -157,15 +162,19 @@ public class MainActivity extends AppCompatActivity {
                 public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                     Messages message = dataSnapshot.getValue(Messages.class);
                     try {
-                        if (message.getTargetUser().equals(mUsername)) {
-                            mMessages.add(message);
-                            mMessageRVAdapter = new MessagesRVAdapter(MainActivity.this, mMessages);
-                            mMessageRV.setAdapter(mMessageRVAdapter);
-                        } else if (message.getMyName().equals(mUsername)) {
-                            message.setSenderSelf(true);
-                            mMessages.add(message);
-                            mMessageRVAdapter = new MessagesRVAdapter(MainActivity.this, mMessages);
-                            mMessageRV.setAdapter(mMessageRVAdapter);
+                        if (message.getMyName().equals(mCurrentContact)) {
+                            if (message.getTargetUser().equals(mUsername)) {
+                                mMessages.add(message);
+                                mMessageRVAdapter = new MessagesRVAdapter(MainActivity.this, mMessages);
+                                mMessageRV.setAdapter(mMessageRVAdapter);
+                            }
+                        } else if (message.getTargetUser().equals(mCurrentContact)) {
+                            if (message.getMyName().equals(mUsername)) {
+                                message.setSenderSelf(true);
+                                mMessages.add(message);
+                                mMessageRVAdapter = new MessagesRVAdapter(MainActivity.this, mMessages);
+                                mMessageRV.setAdapter(mMessageRVAdapter);
+                            }
                         }
                     } catch (NullPointerException e) {
                         Log.e("onChildAdded", "Null pointer Exception");
@@ -199,13 +208,11 @@ public class MainActivity extends AppCompatActivity {
     public void onSignedInInitialize(String username) {
         mUsername = username;
         attachDatabaseReadListener();
-        mUsernameDisplay.setText(mUsername);
     }
 
 
     public void onSignOutCleanup() {
         mUsername = "";
-        mRecipient.setText("");
         mMessages = null;
         dettachDatabaseReadListener();
         mUsernameDisplay.setText("");

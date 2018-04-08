@@ -3,4 +3,7 @@
     <string name="sign_out">Sign Out</string>
     <string name="send_button_label">Send</string>
     <string name="send_to">Recipient</string>
+    <string name="find_contacts">Find Contacts</string>
+    <string name="search">Search</string>
+    <string name="add_contacts">Add</string>
 </resources>
