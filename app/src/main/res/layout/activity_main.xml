@@ -19,7 +19,9 @@
             android:layout_height="wrap_content"
             android:id="@+id/current_user"
             android:textSize="30sp"
-            android:gravity="center"/>
+            android:gravity="center"
+            android:textColor="@android:color/white"
+            android:background="@color/colorPrimaryLight"/>
 
 
     </LinearLayout>

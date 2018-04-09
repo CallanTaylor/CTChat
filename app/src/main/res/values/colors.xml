@@ -9,4 +9,6 @@
     <color name="colorRVBackground2">#eff2e6</color>
     <color name="circleSender">#079b40</color>
     <color name="circleReciever">#b0d14f</color>
+    <color name="recievedMessage">#cae285</color>
+    <color name="sentMessage">#8ecea6</color>
 </resources>

@@ -54,6 +54,23 @@ public class MessagesRVAdapter extends RecyclerView.Adapter<MessagesRVAdapter.Me
         holder.mMessageText.setText(messages.get(position).getMessageText());
         holder.mSenderName.setText(String.valueOf(messages.get(position).getMyName().charAt(0)));
 
+        if (position > 0) {
+
+
+            if (messages.get(position).getSenderSelf()) {
+                if (messages.get(position - 1).getSenderSelf()) {
+                    holder.mSenderName.setVisibility(View.INVISIBLE);
+                }
+            }
+
+            if (!messages.get(position).getSenderSelf()) {
+                if (!messages.get(position - 1).getSenderSelf()) {
+                    holder.mSenderName.setVisibility(View.INVISIBLE);
+                }
+            }
+
+        }
+
     }
 
     @Override
