@@ -1,6 +1,7 @@
 package com.callan.taylor.ctchat;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.support.annotation.NonNull;
@@ -14,6 +15,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.firebase.ui.auth.AuthUI;
@@ -28,15 +30,17 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class ContactsActivity extends AppCompatActivity {
 
 
     private FirebaseDatabase mFirebaseDatabase;
     private DatabaseReference mMessagesDatabaseReference;
-    private DatabaseReference mContatcsDatabaseReference;
+    private DatabaseReference mMyContatcsDatabaseReference;
     private ChildEventListener mMessagesChildEventListener;
-    private ChildEventListener mContatcsChildEventListener;
+    private ChildEventListener mMyContatcsChildEventListener;
     private String mUsername;
     private FirebaseAuth mFirebaseAuth;
     private FirebaseAuth.AuthStateListener mAuthStateListener;
@@ -47,21 +51,7 @@ public class ContactsActivity extends AppCompatActivity {
     private ContactsRVAdapter mContactsRVAdapter;
     private List<String> mContatcs;
     private EditText mSearchContacts;
-
-
-    /**
-     *  Do all the authentication stuff and have its own read listener, update a recylcerview of
-     *  contacts from a database reference named after the user. have the option to update the
-     *  contacts manually. and have onclicklisteners on each contact which takes the user to an
-     *  instance of main activity wherre the messages are only shown if recieved from that specific
-     *  contact. Pehraps have the recyclerview have 'unread messages' boolean which is set to true
-     *  when the database reference reads that a message has been added by that user, and resets to
-     *  false in th onclick method.
-     *
-     *  Also add notifications. Be careful each step of the way not to add bugs, or introduce
-     *  unnessasary complexity
-     *
-     */
+    private TextView mSignedInAs;
 
 
     @Override
@@ -73,6 +63,7 @@ public class ContactsActivity extends AppCompatActivity {
         mFirebaseAuth = FirebaseAuth.getInstance();
 
         mSearchContacts = (EditText) findViewById(R.id.search_contacts);
+        mSignedInAs = (TextView) findViewById(R.id.signed_in_as);
 
         mContactsRV = (RecyclerView) findViewById(R.id.rv_contacts_list_view);
         mContactsRV.setLayoutManager(new LinearLayoutManager(this));
@@ -119,19 +110,24 @@ public class ContactsActivity extends AppCompatActivity {
         }
     }
 
+
     public void onSignedInInitialize(String username) {
         mUsername = username;
-        mContatcsDatabaseReference = mFirebaseDatabase.getReference().child(mUsername);
+        mSignedInAs.setText("Logged in as " + mUsername);
+        mMyContatcsDatabaseReference = mFirebaseDatabase.getReference().child(mUsername);
+        attatchMyContactsDatabaseRaedListener();
         attachMessagesDatabaseReadListener();
-        attatchContactsDatabaseRaedListener();
     }
 
+
     public void onSignOutCleanup() {
+        mSignedInAs.setText("");
         dettachMessagesDatabaseReadListener();
-        dettachContactsDatabaseReadListener();
+        dettachMyContactsDatabaseReadListener();
         mUsername = "";
-        mContatcs = null;
+        mContatcs.clear();
     }
+
 
     public void attachMessagesDatabaseReadListener() {
         if (mMessagesChildEventListener == null) {
@@ -141,11 +137,20 @@ public class ContactsActivity extends AppCompatActivity {
                     Messages messages = dataSnapshot.getValue(Messages.class);
                     try {
                         if (messages.getTargetUser().equals(mUsername)) {
-                            mContatcs.add(messages.getMyName());
-                            mContatcsDatabaseReference.push().setValue(messages.getMyName());
+                            String receivedFrom = messages.getMyName();
+                            boolean userAlreadyInDatabase = false;
+                            for (String contacts: mContatcs) {
+                                if (receivedFrom.equals(contacts)) {
+                                    userAlreadyInDatabase = true;
+                                }
+                            }
+                            if (!userAlreadyInDatabase) {
+                                mContatcs.add(receivedFrom);
+                                mMyContatcsDatabaseReference.push().setValue(receivedFrom);
+                            }
                         }
                     } catch (NullPointerException e) {
-                        Log.e("on reading message", "Null pointer");
+                        e.printStackTrace();
                     }
                 }
                 @Override
@@ -162,11 +167,21 @@ public class ContactsActivity extends AppCompatActivity {
     }
 
 
-    public void attatchContactsDatabaseRaedListener() {
-        if (mContatcsChildEventListener == null) {
-            mContatcsChildEventListener = new ChildEventListener() {
+    public void attatchMyContactsDatabaseRaedListener() {
+        if (mMyContatcsChildEventListener == null) {
+            mMyContatcsChildEventListener = new ChildEventListener() {
                 @Override
                 public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                    String user = dataSnapshot.getValue().toString();
+                    boolean allreadyInContacts = false;
+                    for (String contact: mContatcs) {
+                        if (contact.equals(user)) {
+                            allreadyInContacts = true;
+                        }
+                    }
+                    if (!allreadyInContacts) {
+                        mContatcs.add(user);
+                    }
                     mContactsRVAdapter = new ContactsRVAdapter(ContactsActivity.this, mContatcs);
                     mContactsRV.setAdapter(mContactsRVAdapter);
                 }
@@ -179,14 +194,15 @@ public class ContactsActivity extends AppCompatActivity {
                 @Override
                 public void onCancelled(DatabaseError databaseError) { }
             };
-            mContatcsDatabaseReference.addChildEventListener(mContatcsChildEventListener);
+            mMyContatcsDatabaseReference.addChildEventListener(mMyContatcsChildEventListener);
         }
     }
 
-    public void dettachContactsDatabaseReadListener() {
-        if (mContatcsChildEventListener != null) {
-            mContatcsDatabaseReference.removeEventListener(mContatcsChildEventListener);
-            mContatcsChildEventListener = null;
+
+    public void dettachMyContactsDatabaseReadListener() {
+        if (mMyContatcsChildEventListener != null) {
+            mMyContatcsDatabaseReference.removeEventListener(mMyContatcsChildEventListener);
+            mMyContatcsChildEventListener = null;
         }
     }
 
@@ -203,7 +219,6 @@ public class ContactsActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         mFirebaseAuth.addAuthStateListener(mAuthStateListener);
-        Toast.makeText(this, "Resume", Toast.LENGTH_SHORT).show();
     }
 
 
@@ -213,9 +228,9 @@ public class ContactsActivity extends AppCompatActivity {
         if (mAuthStateListener != null) {
             mFirebaseAuth.removeAuthStateListener(mAuthStateListener);
         }
+        dettachMessagesDatabaseReadListener();
+        dettachMyContactsDatabaseReadListener();
     }
-
-
 
 
     @Override
@@ -238,17 +253,31 @@ public class ContactsActivity extends AppCompatActivity {
     }
 
 
-    //TODO: sort mContacts to reduce search time
     public void onClickAddContact(View view) {
+        boolean foundInMyContacts = false;
         String searchForContact = mSearchContacts.getText().toString();
         if (!searchForContact.equals("")) {
-            for (String contact: mContatcs) {
+            for (String contact : mContatcs) {
                 if (searchForContact.equals(contact)) {
-                    mContactsRVAdapter = new ContactsRVAdapter(ContactsActivity.this, mContatcs);
-                    mContactsRV.setAdapter(mContactsRVAdapter);
-                    mContactsRVAdapter.notifyDataSetChanged();
+                    foundInMyContacts = true;
+                    onStartMainActivity(searchForContact);
                 }
             }
+            if (!foundInMyContacts) {
+                mMyContatcsDatabaseReference.push().setValue(searchForContact);
+            }
         }
+        mSearchContacts.setText("");
+    }
+
+
+    public void onStartMainActivity(String contactUsername) {
+        Class destinationClass = MainActivity.class;
+
+        Intent startChildActivityIntent = new Intent(this, destinationClass);
+
+        startChildActivityIntent.putExtra(Intent.EXTRA_TEXT, contactUsername);
+
+        startActivity(startChildActivityIntent);
     }
 }

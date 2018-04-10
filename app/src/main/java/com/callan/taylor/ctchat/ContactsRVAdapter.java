@@ -3,6 +3,7 @@ package com.callan.taylor.ctchat;
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -58,12 +59,12 @@ public class ContactsRVAdapter extends RecyclerView.Adapter<ContactsRVAdapter.Co
     class ContactsViewHolder extends RecyclerView.ViewHolder  {
 
         TextView mContactsItem;
-        LinearLayout linearLayout;
+        ConstraintLayout linearLayout;
 
         public ContactsViewHolder(View itemView) {
             super(itemView);
             mContactsItem = (TextView) itemView.findViewById(R.id.contact_text_view);
-            linearLayout = (LinearLayout) itemView.findViewById(R.id.contact_item_layout);
+            linearLayout = (ConstraintLayout) itemView.findViewById(R.id.contact_item_layout);
         }
     }
 }

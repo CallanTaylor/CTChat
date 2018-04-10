@@ -48,9 +48,7 @@ public class MainActivity extends AppCompatActivity {
     private FirebaseAuth.AuthStateListener mAuthStateListener;
     private ChildEventListener mMessagesChildEventListener;
 
-    private ListView mMessageListView;
     private RecyclerView mMessageRV;
-    private MessageAdapter mMessageAdapter;
     private MessagesRVAdapter mMessageRVAdapter;
     private List<Messages> mMessages;
 
@@ -70,7 +68,6 @@ public class MainActivity extends AppCompatActivity {
 
         mMessageText = (EditText) findViewById(R.id.messageEditText);
         mUsernameDisplay = (TextView) findViewById(R.id.current_user);
-        //mMessageListView = (ListView) findViewById(R.id.message_list_view);
         mMessageRV = (RecyclerView) findViewById(R.id.rv_message_list_view);
 
         mMessageRV.setLayoutManager(new LinearLayoutManager(this));
@@ -78,10 +75,7 @@ public class MainActivity extends AppCompatActivity {
         mFirebaseDatabase = FirebaseDatabase.getInstance();
         mFirebaseAuth = FirebaseAuth.getInstance();
 
-        // Initialize message ListView and its adapter
         mMessages = new ArrayList<>();
-        // mMessageAdapter = new MessageAdapter(this, R.layout.message_list_item, messages);
-        // mMessageListView.setAdapter(mMessageAdapter);
 
         mMessagesDatabaseReference = mFirebaseDatabase.getReference().child("messages");
         final List<AuthUI.IdpConfig> providers = Arrays.asList(new AuthUI.IdpConfig.EmailBuilder().build(),
@@ -127,7 +121,6 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
         mFirebaseAuth.addAuthStateListener(mAuthStateListener);
         mUsernameDisplay.setText(mCurrentContact);
-        Toast.makeText(this, "Resume", Toast.LENGTH_SHORT).show();
     }
 
 
