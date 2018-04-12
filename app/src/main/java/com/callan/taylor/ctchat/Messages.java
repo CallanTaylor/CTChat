@@ -9,16 +9,27 @@ public class Messages {
     private String myName;
     private String targetUser;
     private String messageText;
+    private String timeSent;
     private boolean isSenderSelf;
 
     public Messages() {
     }
 
-    public Messages(@NonNull String myName,@NonNull String targetUser,@NonNull String messageText, boolean isSenderSelf) {
+    public Messages(@NonNull String myName,@NonNull String targetUser,@NonNull String messageText,
+                    @NonNull String timeSent, boolean isSenderSelf) {
         this.isSenderSelf = isSenderSelf;
         this.myName = myName;
+        this.timeSent = timeSent;
         this.targetUser = targetUser;
         this.messageText = messageText;
+    }
+
+    public String getTimeSent() {
+        return timeSent;
+    }
+
+    public void setTimeSent(String timeSent) {
+        this.timeSent = timeSent;
     }
 
     public void setMyName(String myName) {

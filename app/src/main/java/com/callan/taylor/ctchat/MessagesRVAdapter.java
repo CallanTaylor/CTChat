@@ -53,6 +53,7 @@ public class MessagesRVAdapter extends RecyclerView.Adapter<MessagesRVAdapter.Me
 
         holder.mMessageText.setText(messages.get(position).getMessageText());
         holder.mSenderName.setText(String.valueOf(messages.get(position).getMyName().charAt(0)));
+        holder.mSentTime.setText(messages.get(position).getTimeSent());
 
         if (position > 0) {
 
@@ -91,11 +92,13 @@ public class MessagesRVAdapter extends RecyclerView.Adapter<MessagesRVAdapter.Me
 
         TextView mMessageText;
         TextView mSenderName;
+        TextView mSentTime;
 
         public MessageViewHolder(View itemView) {
             super(itemView);
             mMessageText = (TextView) itemView.findViewById(R.id.message_text_view);
             mSenderName = (TextView) itemView.findViewById(R.id.sender);
+            mSentTime = (TextView) itemView.findViewById(R.id.message_sent_time);
         }
     }
 }

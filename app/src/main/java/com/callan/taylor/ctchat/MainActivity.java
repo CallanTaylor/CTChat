@@ -26,8 +26,10 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -137,11 +139,18 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    private String printStandardDate(Date date) {
+        return DateFormat.getDateTimeInstance(
+                DateFormat.SHORT, DateFormat.SHORT).format(date);
+    }
+
+
     public void onClickSendMessage(View view) {
+        Date date = new Date();
         if (!mMessageText.getText().toString().equals("")) {
             if (!mCurrentContact.equals("")) {
                 Messages message = new Messages(mUsername, mCurrentContact,
-                        mMessageText.getText().toString(), false);
+                        mMessageText.getText().toString(), printStandardDate(date), false);
                 mMessagesDatabaseReference.push().setValue(message);
                 mMessageText.setText("");
             }

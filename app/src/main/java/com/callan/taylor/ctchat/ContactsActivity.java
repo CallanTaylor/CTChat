@@ -31,8 +31,11 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.security.Provider;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -44,7 +47,6 @@ public class ContactsActivity extends AppCompatActivity {
     private DatabaseReference mMessagesDatabaseReference;
     private DatabaseReference mMyContatcsDatabaseReference;
     private DatabaseReference mUsersDatabaseReference;
-    private DatabaseReference mMyDisplayNameReference;
     private ChildEventListener mMessagesChildEventListener;
     private ChildEventListener mMyContatcsChildEventListener;
     private ChildEventListener mUsersChildEventListener;
