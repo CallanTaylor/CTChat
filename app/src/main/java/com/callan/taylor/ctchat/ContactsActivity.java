@@ -9,6 +9,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -26,7 +27,10 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 
+import java.security.Provider;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -39,9 +43,13 @@ public class ContactsActivity extends AppCompatActivity {
     private FirebaseDatabase mFirebaseDatabase;
     private DatabaseReference mMessagesDatabaseReference;
     private DatabaseReference mMyContatcsDatabaseReference;
+    private DatabaseReference mUsersDatabaseReference;
+    private DatabaseReference mMyDisplayNameReference;
     private ChildEventListener mMessagesChildEventListener;
     private ChildEventListener mMyContatcsChildEventListener;
+    private ChildEventListener mUsersChildEventListener;
     private String mUsername;
+    private String mEmail;
     private FirebaseAuth mFirebaseAuth;
     private FirebaseAuth.AuthStateListener mAuthStateListener;
 
@@ -50,6 +58,7 @@ public class ContactsActivity extends AppCompatActivity {
     private RecyclerView mContactsRV;
     private ContactsRVAdapter mContactsRVAdapter;
     private List<String> mContatcs;
+    private List<String> mUsers;
     private EditText mSearchContacts;
     private TextView mSignedInAs;
 
@@ -69,19 +78,21 @@ public class ContactsActivity extends AppCompatActivity {
         mContactsRV.setLayoutManager(new LinearLayoutManager(this));
 
         mContatcs = new ArrayList<>();
+        mUsers = new ArrayList<>();
 
         final List<AuthUI.IdpConfig> providers = Arrays.asList(new AuthUI.IdpConfig.EmailBuilder().build(),
                 new AuthUI.IdpConfig.GoogleBuilder().build());
 
 
         mMessagesDatabaseReference = mFirebaseDatabase.getReference().child("messages");
+        mUsersDatabaseReference = mFirebaseDatabase.getReference().child("users");
 
         mAuthStateListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 FirebaseUser user = firebaseAuth.getCurrentUser();
                 if (user != null) {
-                    onSignedInInitialize(user.getDisplayName());
+                    onSignedInInitialize(user.getDisplayName(), String.valueOf(user.getEmail()));
                 } else {
                     onSignOutCleanup();
                     startActivityForResult(
@@ -111,12 +122,14 @@ public class ContactsActivity extends AppCompatActivity {
     }
 
 
-    public void onSignedInInitialize(String username) {
+    public void onSignedInInitialize(String username, String email) {
         mUsername = username;
+        mEmail = email;
         mSignedInAs.setText("Logged in as " + mUsername);
         mMyContatcsDatabaseReference = mFirebaseDatabase.getReference().child(mUsername);
         attatchMyContactsDatabaseRaedListener();
         attachMessagesDatabaseReadListener();
+        attatchUserDatabaseReadListener();
     }
 
 
@@ -124,6 +137,8 @@ public class ContactsActivity extends AppCompatActivity {
         mSignedInAs.setText("");
         dettachMessagesDatabaseReadListener();
         dettachMyContactsDatabaseReadListener();
+        dettachUsersDatabaseReadListener();
+        mUsers.clear();
         mUsername = "";
         mContatcs.clear();
     }
@@ -188,13 +203,44 @@ public class ContactsActivity extends AppCompatActivity {
                 @Override
                 public void onChildChanged(DataSnapshot dataSnapshot, String s) { }
                 @Override
-                public void onChildRemoved(DataSnapshot dataSnapshot) { }
+                public void onChildRemoved(DataSnapshot dataSnapshot) {
+                }
                 @Override
                 public void onChildMoved(DataSnapshot dataSnapshot, String s) { }
                 @Override
                 public void onCancelled(DatabaseError databaseError) { }
             };
             mMyContatcsDatabaseReference.addChildEventListener(mMyContatcsChildEventListener);
+        }
+    }
+
+    public void attatchUserDatabaseReadListener() {
+        if (mUsersChildEventListener == null) {
+            mUsersChildEventListener = new ChildEventListener() {
+                @Override
+                public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                    String email = dataSnapshot.child("email").getValue(String.class);
+                    String displayName = dataSnapshot.child("displayName").getValue(String.class);
+                    String userUid = dataSnapshot.getKey();
+                    if (email.equals(mEmail)) {
+                        if (displayName.equals("empty")) {
+                            DatabaseReference displayNameReference = mUsersDatabaseReference
+                                    .child(userUid);
+                            displayNameReference.child("displayName").setValue(mUsername);
+                        }
+                    }
+                    mUsers.add(displayName);
+                }
+                @Override
+                public void onChildChanged(DataSnapshot dataSnapshot, String s) { }
+                @Override
+                public void onChildRemoved(DataSnapshot dataSnapshot) { }
+                @Override
+                public void onChildMoved(DataSnapshot dataSnapshot, String s) { }
+                @Override
+                public void onCancelled(DatabaseError databaseError) { }
+            };
+            mUsersDatabaseReference.addChildEventListener(mUsersChildEventListener);
         }
     }
 
@@ -215,6 +261,13 @@ public class ContactsActivity extends AppCompatActivity {
     }
 
 
+    public void dettachUsersDatabaseReadListener() {
+        if (mUsersChildEventListener != null) {
+            mUsersDatabaseReference.removeEventListener(mUsersChildEventListener);
+            mUsersChildEventListener = null;
+        }
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -230,6 +283,7 @@ public class ContactsActivity extends AppCompatActivity {
         }
         dettachMessagesDatabaseReadListener();
         dettachMyContactsDatabaseReadListener();
+        dettachUsersDatabaseReadListener();
     }
 
 
@@ -253,18 +307,25 @@ public class ContactsActivity extends AppCompatActivity {
     }
 
 
+
+
     public void onClickAddContact(View view) {
         boolean foundInMyContacts = false;
         String searchForContact = mSearchContacts.getText().toString();
         if (!searchForContact.equals("")) {
-            for (String contact : mContatcs) {
-                if (searchForContact.equals(contact)) {
-                    foundInMyContacts = true;
-                    onStartMainActivity(searchForContact);
+            if (mUsers.contains(searchForContact)) {
+                for (String contact : mContatcs) {
+                    if (searchForContact.equals(contact)) {
+                        foundInMyContacts = true;
+                        onStartMainActivity(searchForContact);
+                    }
                 }
-            }
-            if (!foundInMyContacts) {
-                mMyContatcsDatabaseReference.push().setValue(searchForContact);
+                if (!foundInMyContacts) {
+                    mMyContatcsDatabaseReference.push().setValue(searchForContact);
+                }
+            } else {
+                Toast.makeText(this, "User " + searchForContact +
+                " is not a registered user", Toast.LENGTH_SHORT).show();
             }
         }
         mSearchContacts.setText("");

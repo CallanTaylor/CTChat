@@ -138,12 +138,13 @@ public class MainActivity extends AppCompatActivity {
 
 
     public void onClickSendMessage(View view) {
-        if (!(mMessageText.getText().toString().equals("") &&
-                mCurrentContact.equals(""))) {
-            Messages message = new Messages(mUsername, mCurrentContact,
-                    mMessageText.getText().toString(), false);
-            mMessagesDatabaseReference.push().setValue(message);
-            mMessageText.setText("");
+        if (!mMessageText.getText().toString().equals("")) {
+            if (!mCurrentContact.equals("")) {
+                Messages message = new Messages(mUsername, mCurrentContact,
+                        mMessageText.getText().toString(), false);
+                mMessagesDatabaseReference.push().setValue(message);
+                mMessageText.setText("");
+            }
         }
     }
 

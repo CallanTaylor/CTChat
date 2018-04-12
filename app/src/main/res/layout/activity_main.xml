@@ -1,68 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
 
-    <LinearLayout
-        android:id="@+id/linearLayoutTop"
+    <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true"
-        android:background="@color/colorRVBackground2">
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/current_user"
-            android:textSize="30sp"
-            android:gravity="center"
-            android:textColor="@android:color/white"
-            android:background="@color/colorPrimaryLight"/>
-
-
-    </LinearLayout>
-
+        android:id="@+id/current_user"
+        android:textSize="30sp"
+        android:gravity="center"
+        android:textColor="@android:color/white"
+        android:background="@color/recievedMessage"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rv_message_list_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@id/linearLayoutTop"
-        android:layout_above="@id/linearLayout"
+        android:layout_height="0dp"
         android:background="@color/colorRVBackground2"
-        android:stackFromBottom="true">
+        android:stackFromBottom="true"
+        app:layout_constraintBottom_toTopOf="@+id/messageEditText"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/current_user">
 
     </android.support.v7.widget.RecyclerView>
 
-
-
-    <LinearLayout
-        android:id="@+id/linearLayout"
-        android:layout_width="match_parent"
+    <EditText
+        android:id="@+id/messageEditText"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentStart="true"
-        android:orientation="horizontal">
+        android:layout_gravity="center_vertical"
+        android:layout_weight="1"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/sendButton"
+        app:layout_constraintStart_toStartOf="parent" />
 
-        <EditText
-            android:id="@+id/messageEditText"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_weight="1" />
+    <Button
+        android:id="@+id/sendButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:onClick="onClickSendMessage"
+        android:text="@string/send_button_label"
+        app:layout_constraintBottom_toTopOf="@+id/messageEditText"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/messageEditText" />
 
-        <Button
-            android:id="@+id/sendButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            android:text="@string/send_button_label"
-            android:onClick="onClickSendMessage"/>
-
-    </LinearLayout>
-
-</RelativeLayout>
+</android.support.constraint.ConstraintLayout>
