@@ -181,7 +181,7 @@ public class MainActivity extends AppCompatActivity {
                         }
                         mMessageRV.scrollToPosition(mMessageRVAdapter.getItemCount()-1);
                     } catch (NullPointerException e) {
-                        Log.e("onChildAdded", "Null pointer Exception");
+                       e.printStackTrace();
                     }
                 }
                 @Override
@@ -221,28 +221,5 @@ public class MainActivity extends AppCompatActivity {
         dettachDatabaseReadListener();
         mUsernameDisplay.setText("");
     }
-
-    /**
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.main_menu, menu);
-        return true;
-    }
-
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.sign_out_menu:
-                AuthUI.getInstance().signOut(this);
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-
-        }
-    }
-    */
 }
 

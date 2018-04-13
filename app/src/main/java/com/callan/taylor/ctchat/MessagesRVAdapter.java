@@ -59,14 +59,12 @@ public class MessagesRVAdapter extends RecyclerView.Adapter<MessagesRVAdapter.Me
             if (messages.get(position).getSenderSelf()) {
                 if (messages.get(position - 1).getSenderSelf()) {
                     holder.mSenderName.setVisibility(View.INVISIBLE);
-                    Log.e("two sent by", "me");
                 }
             }
 
             if (!messages.get(position).getSenderSelf()) {
                 if (!messages.get(position - 1).getSenderSelf()) {
                     holder.mSenderName.setVisibility(View.INVISIBLE);
-                    Log.e("two recieved by", "me");
                 }
             }
         }

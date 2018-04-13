@@ -47,7 +47,9 @@ public class ContactsRVAdapter extends RecyclerView.Adapter<ContactsRVAdapter.Co
 
                 Intent startChildActivityIntent = new Intent(mContext, destinationClass);
 
-                startChildActivityIntent.putExtra(Intent.EXTRA_TEXT, mContacts.get(position));
+                if (mContacts.get(position) != null) {
+                    startChildActivityIntent.putExtra(Intent.EXTRA_TEXT, mContacts.get(position));
+                }
 
                 mContext.startActivity(startChildActivityIntent);
             }

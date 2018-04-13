@@ -40,6 +40,10 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
+/**
+ * @author Callan Taylor
+ *
+ */
 public class ContactsActivity extends AppCompatActivity {
 
 
@@ -189,18 +193,22 @@ public class ContactsActivity extends AppCompatActivity {
             mMyContatcsChildEventListener = new ChildEventListener() {
                 @Override
                 public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                    String user = dataSnapshot.getValue().toString();
-                    boolean allreadyInContacts = false;
-                    for (String contact: mContatcs) {
-                        if (contact.equals(user)) {
-                            allreadyInContacts = true;
+                    try {
+                        String user = dataSnapshot.getValue().toString();
+                        boolean allreadyInContacts = false;
+                        for (String contact : mContatcs) {
+                            if (contact.equals(user)) {
+                                allreadyInContacts = true;
+                            }
                         }
+                        if (!allreadyInContacts) {
+                            mContatcs.add(user);
+                        }
+                        mContactsRVAdapter = new ContactsRVAdapter(ContactsActivity.this, mContatcs);
+                        mContactsRV.setAdapter(mContactsRVAdapter);
+                    } catch (NullPointerException e) {
+                        e.printStackTrace();
                     }
-                    if (!allreadyInContacts) {
-                        mContatcs.add(user);
-                    }
-                    mContactsRVAdapter = new ContactsRVAdapter(ContactsActivity.this, mContatcs);
-                    mContactsRV.setAdapter(mContactsRVAdapter);
                 }
                 @Override
                 public void onChildChanged(DataSnapshot dataSnapshot, String s) { }
@@ -221,17 +229,21 @@ public class ContactsActivity extends AppCompatActivity {
             mUsersChildEventListener = new ChildEventListener() {
                 @Override
                 public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                    String email = dataSnapshot.child("email").getValue(String.class);
-                    String displayName = dataSnapshot.child("displayName").getValue(String.class);
-                    String userUid = dataSnapshot.getKey();
-                    if (email.equals(mEmail)) {
-                        if (displayName.equals("empty")) {
-                            DatabaseReference displayNameReference = mUsersDatabaseReference
-                                    .child(userUid);
-                            displayNameReference.child("displayName").setValue(mUsername);
+                    try {
+                        String email = dataSnapshot.child("email").getValue(String.class);
+                        String displayName = dataSnapshot.child("displayName").getValue(String.class);
+                        String userUid = dataSnapshot.getKey();
+                        if (email.equals(mEmail)) {
+                            if (displayName.equals("empty")) {
+                                DatabaseReference displayNameReference = mUsersDatabaseReference
+                                        .child(userUid);
+                                displayNameReference.child("displayName").setValue(mUsername);
+                            }
                         }
+                        mUsers.add(displayName);
+                    } catch (NullPointerException e) {
+                        e.printStackTrace();
                     }
-                    mUsers.add(displayName);
                 }
                 @Override
                 public void onChildChanged(DataSnapshot dataSnapshot, String s) { }
