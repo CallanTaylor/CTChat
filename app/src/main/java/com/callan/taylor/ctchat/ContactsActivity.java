@@ -326,7 +326,7 @@ public class ContactsActivity extends AppCompatActivity {
                     mMyContatcsDatabaseReference.push().setValue(searchForContact);
                 }
             } else {
-                Toast.makeText(this, "User " + searchForContact +
+                Toast.makeText(this, searchForContact +
                 " is not a registered user", Toast.LENGTH_SHORT).show();
             }
         }

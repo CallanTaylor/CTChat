@@ -179,6 +179,7 @@ public class MainActivity extends AppCompatActivity {
                                 mMessageRV.setAdapter(mMessageRVAdapter);
                             }
                         }
+                        mMessageRV.scrollToPosition(mMessageRVAdapter.getItemCount()-1);
                     } catch (NullPointerException e) {
                         Log.e("onChildAdded", "Null pointer Exception");
                     }
@@ -221,6 +222,7 @@ public class MainActivity extends AppCompatActivity {
         mUsernameDisplay.setText("");
     }
 
+    /**
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -241,5 +243,6 @@ public class MainActivity extends AppCompatActivity {
 
         }
     }
+    */
 }
 
