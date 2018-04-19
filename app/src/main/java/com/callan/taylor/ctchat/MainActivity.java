@@ -101,7 +101,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         };
-
     }
 
 
@@ -126,7 +125,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-
     @Override
     protected void onPause() {
         super.onPause();
@@ -135,7 +133,6 @@ public class MainActivity extends AppCompatActivity {
         }
         dettachDatabaseReadListener();
         mUsernameDisplay.setText("");
-        mMessages = null;
     }
 
 
@@ -167,7 +164,6 @@ public class MainActivity extends AppCompatActivity {
                     try {
                         if (message.getMyName().equals(mCurrentContact)) {
                             if (message.getTargetUser().equals(mUsername)) {
-                                Log.e("raed listener", "message sent to me");
                                 mMessages.add(message);
                                 mMessageRVAdapter = new MessagesRVAdapter(MainActivity.this, mMessages);
                                 mMessageRV.setAdapter(mMessageRVAdapter);
@@ -175,7 +171,6 @@ public class MainActivity extends AppCompatActivity {
                             }
                         } else if (message.getTargetUser().equals(mCurrentContact)) {
                             if (message.getMyName().equals(mUsername)) {
-                                Log.e("read listener", "message sent by me");
                                 message.setSenderSelf(true);
                                 mMessages.add(message);
                                 mMessageRVAdapter = new MessagesRVAdapter(MainActivity.this, mMessages);

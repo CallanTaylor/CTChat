@@ -52,6 +52,8 @@ public class ContactsActivity extends AppCompatActivity {
     private DatabaseReference mMessagesDatabaseReference;
     private DatabaseReference mMyContatcsDatabaseReference;
     private DatabaseReference mUsersDatabaseReference;
+    private DatabaseReference mNotificationTokens;
+    private DatabaseReference mUserNotficationToken;
     private ChildEventListener mMessagesChildEventListener;
     private ChildEventListener mMyContatcsChildEventListener;
     private ChildEventListener mUsersChildEventListener;
@@ -77,6 +79,9 @@ public class ContactsActivity extends AppCompatActivity {
 
         mFirebaseDatabase = FirebaseDatabase.getInstance();
         mFirebaseAuth = FirebaseAuth.getInstance();
+
+        MyFirebaseInstanceIDService myFirebaseInstanceIDService = new MyFirebaseInstanceIDService();
+        myFirebaseInstanceIDService.onTokenRefresh();
 
         mSearchContacts = (EditText) findViewById(R.id.search_contacts);
         mSignedInAs = (TextView) findViewById(R.id.signed_in_as);
@@ -134,6 +139,10 @@ public class ContactsActivity extends AppCompatActivity {
         mEmail = email;
         mSignedInAs.setText("Logged in as " + mUsername);
         mMyContatcsDatabaseReference = mFirebaseDatabase.getReference().child(mUsername);
+        mNotificationTokens = mFirebaseDatabase.getReference().child("notificationTokens");
+        MyFirebaseInstanceIDService myFirebaseInstanceIDService = new MyFirebaseInstanceIDService();
+        myFirebaseInstanceIDService.onTokenRefresh();
+        String myToken = myFirebaseInstanceIDService.getNotificationToken();
         attatchMyContactsDatabaseRaedListener();
         attachMessagesDatabaseReadListener();
         attatchUserDatabaseReadListener();

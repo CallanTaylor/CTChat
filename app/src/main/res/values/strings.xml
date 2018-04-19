@@ -7,4 +7,5 @@
     <string name="search">Search</string>
     <string name="add_contacts">Add</string>
     <string name="main_notification_channel_name">Primary</string>
+    <string name="default_notification_channel_id" translatable="false">fcm_default_channel</string>
 </resources>
