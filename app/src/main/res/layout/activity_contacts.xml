@@ -5,17 +5,6 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:id="@+id/signed_in_as"
-        android:textSize="20sp"
-        android:gravity="center"
-        android:textColor="@android:color/white"
-        android:background="@color/recievedMessage" />
 
 
     <EditText
@@ -29,20 +18,32 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/search_button" />
 
-    <Button
-        android:id="@+id/search_button"
+    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:id="@+id/search_button"
+        android:layout_margin="8dp"
         android:onClick="onClickAddContact"
-        android:text="@string/add_contacts"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/signed_in_as" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:drawableStart="@drawable/ic_add_contact"
+        android:drawableLeft="@drawable/ic_add_contact"/>
+
+    <!--<Button-->
+        <!--android:id="@+id/search_button"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:onClick="onClickAddContact"-->
+        <!--android:text="@string/add_contacts"-->
+        <!--app:layout_constraintEnd_toEndOf="parent"-->
+        <!--app:layout_constraintTop_toTopOf="parent" />-->
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rv_contacts_list_view"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:orientation="vertical"
+        android:background="@color/contactsBackground"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

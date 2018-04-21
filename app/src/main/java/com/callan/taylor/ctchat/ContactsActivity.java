@@ -83,7 +83,7 @@ public class ContactsActivity extends AppCompatActivity {
         myFirebaseInstanceIDService.onTokenRefresh();
 
         mSearchContacts = (EditText) findViewById(R.id.search_contacts);
-        mSignedInAs = (TextView) findViewById(R.id.signed_in_as);
+
 
         mContactsRV = (RecyclerView) findViewById(R.id.rv_contacts_list_view);
         mContactsRV.setLayoutManager(new LinearLayoutManager(this));
@@ -136,7 +136,6 @@ public class ContactsActivity extends AppCompatActivity {
     public void onSignedInInitialize(String username, String email) {
         mUsername = username;
         mEmail = email;
-        mSignedInAs.setText("Logged in as " + mUsername);
         mMyContatcsDatabaseReference = mFirebaseDatabase.getReference().child(mUsername);
         mNotificationTokens = mFirebaseDatabase.getReference().child("notificationTokens");
         MyFirebaseInstanceIDService myFirebaseInstanceIDService = new MyFirebaseInstanceIDService();

@@ -3,8 +3,9 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/colorRVBackground2"
-    android:layout_marginTop="8dp"
+    android:background="@color/contactItem"
+    android:layout_marginTop="4dp"
+    android:padding="6dp"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <TextView

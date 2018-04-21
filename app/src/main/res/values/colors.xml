@@ -5,10 +5,16 @@
     <color name="colorAccent">#FF4081</color>
     <color name="colorExtra">#2ccc3a</color>
     <color name="colorPrimaryLight">#7986CB</color>
+    <!--<color name="colorPrimary">#2196F3</color>-->
+    <!--<color name="colorPrimaryDark">#1976D2</color>-->
+    <!--<color name="colorPrimaryLight">#C5CAE9</color>-->
+    <!--<color name="colorAccent">#f9f9f9</color>-->
     <color name="colorRVBackground">#a4a9c1</color>
     <color name="colorRVBackground2">#eff2e6</color>
     <color name="circleSender">#079b40</color>
     <color name="circleReciever">#b0d14f</color>
     <color name="recievedMessage">#cae285</color>
     <color name="sentMessage">#8ecea6</color>
+    <color name="contactsBackground">#e5e5e5</color>
+    <color name="contactItem">#fcfcfc</color>
 </resources>
