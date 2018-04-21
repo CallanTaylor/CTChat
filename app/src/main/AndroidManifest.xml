@@ -2,8 +2,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.callan.taylor.ctchat">
 
-    <uses-permission android:name="android.permission.VIBRATE"/>
-
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -32,6 +30,10 @@
             <meta-data
                 android:name="android.support.PARENT.ACTIVITY"
                 android:value=".ContactsActivity" />
+            <intent-filter>
+                <action android:name=".MainActivity" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
         </activity>
 
         <service
@@ -47,6 +49,8 @@
                 <action android:name="com.google.firebase.MESSAGING_EVENT"/>
             </intent-filter>
         </service>
+
+
 
     </application>
 

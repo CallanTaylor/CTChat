@@ -15,16 +15,29 @@ import android.util.Log;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
+import java.util.Map;
+
 public class NotificationRecievedMessageService extends FirebaseMessagingService {
 
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
         super.onMessageReceived(remoteMessage);
 
-        String senderName = remoteMessage.getNotification().getTitle();
-        String messageBody = remoteMessage.getNotification().getBody();
+        String senderName;
+        String messageBody;
 
-        Intent intent =  new Intent(this, MainActivity.class);
+        if (remoteMessage.getData().size() > 0) {
+            Log.e("Data message", "received");
+            Map<String, String> data = remoteMessage.getData();
+            messageBody = data.get("body");
+            senderName = data.get("title");
+        } else {
+            Log.e("Notification message", "received");
+            senderName = remoteMessage.getNotification().getTitle();
+            messageBody = remoteMessage.getNotification().getBody();
+        }
+
+        Intent intent = new Intent(this, MainActivity.class);
         intent.putExtra(Intent.EXTRA_TEXT, senderName);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent,
@@ -34,13 +47,13 @@ public class NotificationRecievedMessageService extends FirebaseMessagingService
 
         NotificationCompat.Builder notificationBuilder =
                 new NotificationCompat.Builder(this, channelId)
-                .setContentTitle(senderName)
-                .setContentText(messageBody)
+                        .setContentTitle(senderName)
+                        .setContentText(messageBody)
                         .setColor(ContextCompat.getColor(this, R.color.circleReciever))
                         .setSmallIcon(R.drawable.ic_notification)
                         .setAutoCancel(true)
-                .setDefaults(Notification.DEFAULT_VIBRATE)
-                .setContentIntent(pendingIntent);
+                        .setDefaults(Notification.DEFAULT_VIBRATE)
+                        .setContentIntent(pendingIntent);
 
         NotificationManager notificationManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);

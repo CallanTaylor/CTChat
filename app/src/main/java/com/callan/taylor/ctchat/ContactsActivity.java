@@ -53,7 +53,6 @@ public class ContactsActivity extends AppCompatActivity {
     private DatabaseReference mMyContatcsDatabaseReference;
     private DatabaseReference mUsersDatabaseReference;
     private DatabaseReference mNotificationTokens;
-    private DatabaseReference mUserNotficationToken;
     private ChildEventListener mMessagesChildEventListener;
     private ChildEventListener mMyContatcsChildEventListener;
     private ChildEventListener mUsersChildEventListener;
@@ -143,6 +142,7 @@ public class ContactsActivity extends AppCompatActivity {
         MyFirebaseInstanceIDService myFirebaseInstanceIDService = new MyFirebaseInstanceIDService();
         myFirebaseInstanceIDService.onTokenRefresh();
         String myToken = myFirebaseInstanceIDService.getNotificationToken();
+        mNotificationTokens.child(mUsername).setValue(myToken);
         attatchMyContactsDatabaseRaedListener();
         attachMessagesDatabaseReadListener();
         attatchUserDatabaseReadListener();
@@ -204,7 +204,7 @@ public class ContactsActivity extends AppCompatActivity {
                 @Override
                 public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                     try {
-                        String user = dataSnapshot.getValue().toString();
+                        final String user = dataSnapshot.getValue().toString();
                         boolean allreadyInContacts = false;
                         for (String contact : mContatcs) {
                             if (contact.equals(user)) {
