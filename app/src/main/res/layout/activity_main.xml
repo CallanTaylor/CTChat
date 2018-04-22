@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/colorRVBackground2">
 
 
     <TextView
@@ -24,47 +25,53 @@
         android:layout_height="0dp"
         android:background="@color/colorRVBackground2"
         android:stackFromBottom="true"
-        app:layout_constraintBottom_toTopOf="@+id/messageEditText"
+        app:layout_constraintBottom_toTopOf="@+id/new_message_layout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/current_user">
 
     </android.support.v7.widget.RecyclerView>
 
-    <EditText
-        android:id="@+id/messageEditText"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
-        android:layout_weight="1"
-        android:inputType="textCapSentences"
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/new_message_layout"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_margin="4dp"
+        android:background="@drawable/search_bar_oval"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/sendButton"
-        app:layout_constraintStart_toStartOf="parent" />
-
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="6dp"
-        android:id="@+id/sendButton"
-        android:drawableLeft="@drawable/ic_send_button"
-        android:drawableStart="@drawable/ic_send_button"
-        app:layout_constraintBottom_toTopOf="@+id/messageEditText"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/messageEditText"
-        android:onClick="onClickSendMessage"/>
+        app:layout_constraintStart_toStartOf="parent">
 
-    <!--<Button-->
-        <!--android:id="@+id/sendButton"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_gravity="bottom"-->
-        <!--android:onClick="onClickSendMessage"-->
-        <!--android:text="@string/send_button_label"-->
-        <!--app:layout_constraintBottom_toTopOf="@+id/messageEditText"-->
-        <!--app:layout_constraintEnd_toEndOf="parent"-->
-        <!--app:layout_constraintTop_toBottomOf="@+id/messageEditText" />-->
 
+        <EditText
+            android:id="@+id/messageEditText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginEnd="4dp"
+            android:layout_marginStart="16dp"
+            android:layout_weight="1"
+            android:inputType="textCapSentences"
+            app:layout_constraintBottom_toTopOf="@+id/sendButton"
+            app:layout_constraintEnd_toStartOf="@+id/sendButton"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/sendButton" />
+
+
+        <TextView
+            android:id="@+id/sendButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:drawableLeft="@drawable/ic_send_button"
+            android:drawablePadding="4dp"
+            android:drawableStart="@drawable/ic_send_button"
+            android:onClick="onClickSendMessage"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </android.support.constraint.ConstraintLayout>
 
 </android.support.constraint.ConstraintLayout>

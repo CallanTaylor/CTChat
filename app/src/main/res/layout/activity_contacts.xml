@@ -5,49 +5,56 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-
-
-    <EditText
-        android:id="@+id/search_contacts"
-        android:hint="@string/search"
-        android:layout_width="0dp"
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/search_bar_layout"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:inputType="textCapWords"
-        app:layout_constraintBottom_toTopOf="@+id/search_button"
-        app:layout_constraintEnd_toStartOf="@+id/search_button"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/search_button" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/search_button"
-        android:layout_margin="8dp"
-        android:onClick="onClickAddContact"
+        android:layout_margin="4dp"
+        android:background="@drawable/search_bar_oval"
+        app:layout_constraintBottom_toTopOf="@+id/rv_contacts_list_view"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:drawableStart="@drawable/ic_add_contact"
-        android:drawableLeft="@drawable/ic_add_contact"/>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-    <!--<Button-->
-        <!--android:id="@+id/search_button"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:onClick="onClickAddContact"-->
-        <!--android:text="@string/add_contacts"-->
-        <!--app:layout_constraintEnd_toEndOf="parent"-->
-        <!--app:layout_constraintTop_toTopOf="parent" />-->
+        <EditText
+            android:id="@+id/search_contacts"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="4dp"
+            android:layout_marginStart="16dp"
+            android:layout_weight="1"
+            android:hint="@string/search"
+            android:inputType="textCapWords"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/search_button"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/search_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:drawableLeft="@drawable/ic_add_contact"
+            android:drawableStart="@drawable/ic_add_contact"
+            android:onClick="onClickAddContact"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/search_contacts"
+            app:layout_constraintBottom_toTopOf="@+id/search_contacts"/>
+
+    </android.support.constraint.ConstraintLayout>
+
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rv_contacts_list_view"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:background="@color/colorRVBackground2"
         android:orientation="vertical"
-        android:background="@color/contactsBackground"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/search_contacts">
+        app:layout_constraintTop_toBottomOf="@+id/search_bar_layout">
 
     </android.support.v7.widget.RecyclerView>
 

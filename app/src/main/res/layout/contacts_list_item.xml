@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/contact_text_view"
         android:textSize="30dp"
-        android:gravity="center"
+        android:gravity="start"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
