@@ -27,12 +27,10 @@ public class NotificationRecievedMessageService extends FirebaseMessagingService
         String messageBody;
 
         if (remoteMessage.getData().size() > 0) {
-            Log.e("Data message", "received");
             Map<String, String> data = remoteMessage.getData();
             messageBody = data.get("body");
             senderName = data.get("title");
         } else {
-            Log.e("Notification message", "received");
             senderName = remoteMessage.getNotification().getTitle();
             messageBody = remoteMessage.getNotification().getBody();
         }

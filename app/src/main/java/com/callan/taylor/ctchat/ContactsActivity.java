@@ -68,7 +68,6 @@ public class ContactsActivity extends AppCompatActivity {
     private List<String> mContatcs;
     private List<String> mUsers;
     private EditText mSearchContacts;
-    private TextView mSignedInAs;
 
 
     @Override
@@ -149,13 +148,15 @@ public class ContactsActivity extends AppCompatActivity {
 
 
     public void onSignOutCleanup() {
-        mSignedInAs.setText("");
         dettachMessagesDatabaseReadListener();
         dettachMyContactsDatabaseReadListener();
         dettachUsersDatabaseReadListener();
         mUsers.clear();
         mUsername = "";
         mContatcs.clear();
+        mContactsRVAdapter = new ContactsRVAdapter(this, mContatcs);
+        mContactsRV.setAdapter(mContactsRVAdapter);
+        mContactsRVAdapter.notifyDataSetChanged();
     }
 
 
@@ -223,6 +224,11 @@ public class ContactsActivity extends AppCompatActivity {
                 public void onChildChanged(DataSnapshot dataSnapshot, String s) { }
                 @Override
                 public void onChildRemoved(DataSnapshot dataSnapshot) {
+                    String contact = dataSnapshot.getValue(String.class);
+                    if (mContatcs.contains(contact)) {
+                        mContatcs.remove(contact);
+                    }
+                    Log.e("remove contact", "called");
                 }
                 @Override
                 public void onChildMoved(DataSnapshot dataSnapshot, String s) { }

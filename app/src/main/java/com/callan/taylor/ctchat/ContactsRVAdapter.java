@@ -40,11 +40,15 @@ public class ContactsRVAdapter extends RecyclerView.Adapter<ContactsRVAdapter.Co
         return viewHolder;
     }
 
+    public String getContact(final int position) {
+        return mContacts.get(position);
+    }
 
     @Override
     public void onBindViewHolder(@NonNull ContactsViewHolder holder, final int position) {
 
         holder.mContactsItem.setText(mContacts.get(position));
+
 
         holder.linearLayout.setOnClickListener(new View.OnClickListener() {
             @Override
