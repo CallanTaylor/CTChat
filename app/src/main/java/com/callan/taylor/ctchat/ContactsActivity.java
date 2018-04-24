@@ -133,7 +133,7 @@ public class ContactsActivity extends AppCompatActivity {
 
 
     public void onSignedInInitialize(String username, String email) {
-        mUsername = username;
+        mUsername = username.trim();
         mEmail = email;
         mMyContatcsDatabaseReference = mFirebaseDatabase.getReference().child(mUsername);
         mNotificationTokens = mFirebaseDatabase.getReference().child("notificationTokens");
