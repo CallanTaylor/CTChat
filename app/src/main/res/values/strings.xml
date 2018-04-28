@@ -8,4 +8,5 @@
     <string name="add_contacts">Add</string>
     <string name="main_notification_channel_name">Primary</string>
     <string name="default_notification_channel_id" translatable="false">fcm_default_channel</string>
+    <string name="already_added_text">Friends</string>
 </resources>

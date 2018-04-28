@@ -1,48 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:layout_height="match_parent">
 
-    <android.support.constraint.ConstraintLayout
-        android:id="@+id/search_bar_layout"
+
+    <android.support.v7.widget.SearchView
+        android:id="@+id/search_all_contacts"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="4dp"
-        android:background="@drawable/search_bar_oval"
-        app:layout_constraintBottom_toTopOf="@+id/rv_contacts_list_view"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <EditText
-            android:id="@+id/search_contacts"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="4dp"
-            android:layout_marginStart="16dp"
-            android:layout_weight="1"
-            android:hint="@string/search"
-            android:inputType="textCapWords"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/search_button"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+    </android.support.v7.widget.SearchView>
 
-        <TextView
-            android:id="@+id/search_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
-            android:drawableLeft="@drawable/ic_add_contact"
-            android:drawableStart="@drawable/ic_add_contact"
-            android:onClick="onClickAddContact"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/search_contacts"
-            app:layout_constraintBottom_toTopOf="@+id/search_contacts"/>
+    <View
+        android:id="@+id/above_info_line"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="@android:color/darker_gray"
+        app:layout_constraintTop_toBottomOf="@+id/search_all_contacts"
+        app:layout_constraintBottom_toTopOf="@+id/rv_info_message"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"/>
 
-    </android.support.constraint.ConstraintLayout>
+    <TextView
+        android:id="@+id/rv_info_message"
+        android:gravity="center_horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="20dp"
+        android:textColor="@android:color/white"
+        android:background="@color/recievedMessage"
+        app:layout_constraintTop_toBottomOf="@+id/above_info_line"
+        app:layout_constraintBottom_toBottomOf="@+id/below_info_line"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"/>
+
+    <View
+        android:id="@+id/below_info_line"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="@android:color/darker_gray"
+        app:layout_constraintTop_toBottomOf="@+id/rv_info_message"
+        app:layout_constraintBottom_toTopOf="@+id/rv_contacts_list_view"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"/>
 
 
     <android.support.v7.widget.RecyclerView
@@ -54,7 +59,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/search_bar_layout">
+        app:layout_constraintTop_toBottomOf="@+id/below_info_line">
 
     </android.support.v7.widget.RecyclerView>
 

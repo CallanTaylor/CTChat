@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    android:id="@+id/user"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_marginBottom="4dp"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/contactItem">
+
+    <TextView
+        android:id="@+id/user_displayName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="Callan Taylor"
+        android:textSize="30sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/already_added_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:text="@string/already_added_text"
+        app:layout_constraintBottom_toTopOf="@+id/user_displayName"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/user_displayName" />
+
+    <TextView
+        android:id="@+id/already_added_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/ic_already_added"
+        app:layout_constraintBottom_toTopOf="@+id/already_added_text"
+        app:layout_constraintTop_toBottomOf="@+id/already_added_text"
+        app:layout_constraintEnd_toStartOf="@id/already_added_text"/>
+
+
+
+</android.support.constraint.ConstraintLayout>

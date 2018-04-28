@@ -6,9 +6,11 @@ import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.view.Menu;
@@ -29,17 +31,10 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.iid.FirebaseInstanceId;
 
-import java.security.Provider;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
 
 /**
  * @author Callan Taylor
@@ -56,6 +51,7 @@ public class ContactsActivity extends AppCompatActivity {
     private ChildEventListener mMessagesChildEventListener;
     private ChildEventListener mMyContatcsChildEventListener;
     private ChildEventListener mUsersChildEventListener;
+    private ChildEventListener mAllUsersChildEventListener;
     private String mUsername;
     private String mEmail;
     private FirebaseAuth mFirebaseAuth;
@@ -65,15 +61,23 @@ public class ContactsActivity extends AppCompatActivity {
 
     private RecyclerView mContactsRV;
     private ContactsRVAdapter mContactsRVAdapter;
+    private AddContactRVAdapter mAddContactRVAdapter;
+    private SearchView mSearchView;
+    private TextView mRVInfoMessage;
+
     private List<String> mContatcs;
     private List<String> mUsers;
-    private EditText mSearchContacts;
-
+    private List<String> mAllUsernames;
+    private List<String> mAllEmails;
+    private List<String> mSuggestedUsers;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_contacts);
+
+        Intent intentThatStartedThisActivity = getIntent();
+
 
         mFirebaseDatabase = FirebaseDatabase.getInstance();
         mFirebaseAuth = FirebaseAuth.getInstance();
@@ -81,14 +85,17 @@ public class ContactsActivity extends AppCompatActivity {
         MyFirebaseInstanceIDService myFirebaseInstanceIDService = new MyFirebaseInstanceIDService();
         myFirebaseInstanceIDService.onTokenRefresh();
 
-        mSearchContacts = (EditText) findViewById(R.id.search_contacts);
-
+        mRVInfoMessage = (TextView) findViewById(R.id.rv_info_message);
+        mRVInfoMessage.setText("Contacts");
 
         mContactsRV = (RecyclerView) findViewById(R.id.rv_contacts_list_view);
         mContactsRV.setLayoutManager(new LinearLayoutManager(this));
 
         mContatcs = new ArrayList<>();
         mUsers = new ArrayList<>();
+        mAllUsernames = new ArrayList<>();
+        mAllEmails = new ArrayList<>();
+        mSuggestedUsers = new ArrayList<>();
 
         final List<AuthUI.IdpConfig> providers = Arrays.asList(new AuthUI.IdpConfig.EmailBuilder().build(),
                 new AuthUI.IdpConfig.GoogleBuilder().build());
@@ -115,6 +122,39 @@ public class ContactsActivity extends AppCompatActivity {
                 }
             }
         };
+
+        mSearchView = (SearchView) findViewById(R.id.search_all_contacts);
+        mSearchView.setOnQueryTextListener(
+                new SearchView.OnQueryTextListener() {
+                    @Override
+                    public boolean onQueryTextSubmit(String query) {
+                        mContactsRVAdapter = new ContactsRVAdapter(ContactsActivity.this, mContatcs);
+                        mContactsRV.setAdapter(mContactsRVAdapter);
+                        mRVInfoMessage.setText("Contacts");
+                        return false;
+                    }
+
+                    @Override
+                    public boolean onQueryTextChange(String newText) {
+                        if (!newText.equals("")) {
+                            mSuggestedUsers.clear();
+                            for (String username: mAllUsernames) {
+                                if (username.toLowerCase().contains(newText.toLowerCase())) {
+                                    mSuggestedUsers.add(username);
+                                }
+                            }
+                            mAddContactRVAdapter = new AddContactRVAdapter(ContactsActivity.this, mSuggestedUsers);
+                            mContactsRV.setAdapter(mAddContactRVAdapter);
+                            mRVInfoMessage.setText("All Users");
+                        } else {
+                            mRVInfoMessage.setText("Contacts");
+                            mContactsRVAdapter = new ContactsRVAdapter(ContactsActivity.this, mContatcs);
+                            mContactsRV.setAdapter(mContactsRVAdapter);
+                        }
+                        return false;
+                    }
+                }
+        );
     }
 
 
@@ -141,9 +181,10 @@ public class ContactsActivity extends AppCompatActivity {
         myFirebaseInstanceIDService.onTokenRefresh();
         String myToken = myFirebaseInstanceIDService.getNotificationToken();
         mNotificationTokens.child(mUsername).setValue(myToken);
-        attatchMyContactsDatabaseRaedListener();
+        attachAllUsersDatabaseReadListener();
+        attachMyContactsDatabaseRaedListener();
         attachMessagesDatabaseReadListener();
-        attatchUserDatabaseReadListener();
+        attachUserDatabaseReadListener();
     }
 
 
@@ -151,12 +192,46 @@ public class ContactsActivity extends AppCompatActivity {
         dettachMessagesDatabaseReadListener();
         dettachMyContactsDatabaseReadListener();
         dettachUsersDatabaseReadListener();
+        dettachAllUsersDatabaseReadListener();
         mUsers.clear();
         mUsername = "";
         mContatcs.clear();
         mContactsRVAdapter = new ContactsRVAdapter(this, mContatcs);
         mContactsRV.setAdapter(mContactsRVAdapter);
         mContactsRVAdapter.notifyDataSetChanged();
+    }
+
+    public void attachAllUsersDatabaseReadListener() {
+        if (mAllUsersChildEventListener == null) {
+            mAllUsersChildEventListener = new ChildEventListener() {
+                @Override
+                public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                    try {
+                        String userName = dataSnapshot.child("displayName").getValue(String.class);
+                        String userEmail = dataSnapshot.child("email").getValue(String.class);
+                        mAllUsernames.add(userName);
+                        mAllEmails.add(userEmail);
+                    } catch (NullPointerException e) { }
+                }
+                @Override
+                public void onChildChanged(DataSnapshot dataSnapshot, String s) { }
+                @Override
+                public void onChildRemoved(DataSnapshot dataSnapshot) { }
+                @Override
+                public void onChildMoved(DataSnapshot dataSnapshot, String s) { }
+                @Override
+                public void onCancelled(DatabaseError databaseError) { }
+            };
+            mUsersDatabaseReference.addChildEventListener(mAllUsersChildEventListener);
+        }
+    }
+
+
+    public void dettachAllUsersDatabaseReadListener() {
+        if (mAllUsersChildEventListener != null) {
+            mUsersDatabaseReference.removeEventListener(mAllUsersChildEventListener);
+            mAllUsersChildEventListener = null;
+        }
     }
 
 
@@ -198,7 +273,7 @@ public class ContactsActivity extends AppCompatActivity {
     }
 
 
-    public void attatchMyContactsDatabaseRaedListener() {
+    public void attachMyContactsDatabaseRaedListener() {
         if (mMyContatcsChildEventListener == null) {
             mMyContatcsChildEventListener = new ChildEventListener() {
                 @Override
@@ -223,13 +298,7 @@ public class ContactsActivity extends AppCompatActivity {
                 @Override
                 public void onChildChanged(DataSnapshot dataSnapshot, String s) { }
                 @Override
-                public void onChildRemoved(DataSnapshot dataSnapshot) {
-                    String contact = dataSnapshot.getValue(String.class);
-                    if (mContatcs.contains(contact)) {
-                        mContatcs.remove(contact);
-                    }
-                    Log.e("remove contact", "called");
-                }
+                public void onChildRemoved(DataSnapshot dataSnapshot) { }
                 @Override
                 public void onChildMoved(DataSnapshot dataSnapshot, String s) { }
                 @Override
@@ -239,7 +308,8 @@ public class ContactsActivity extends AppCompatActivity {
         }
     }
 
-    public void attatchUserDatabaseReadListener() {
+
+    public void attachUserDatabaseReadListener() {
         if (mUsersChildEventListener == null) {
             mUsersChildEventListener = new ChildEventListener() {
                 @Override
@@ -297,6 +367,7 @@ public class ContactsActivity extends AppCompatActivity {
         }
     }
 
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -333,31 +404,6 @@ public class ContactsActivity extends AppCompatActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
-    }
-
-
-
-
-    public void onClickAddContact(View view) {
-        boolean foundInMyContacts = false;
-        String searchForContact = mSearchContacts.getText().toString();
-        if (!searchForContact.equals("")) {
-            if (mUsers.contains(searchForContact)) {
-                for (String contact : mContatcs) {
-                    if (searchForContact.equals(contact)) {
-                        foundInMyContacts = true;
-                        onStartMainActivity(searchForContact);
-                    }
-                }
-                if (!foundInMyContacts) {
-                    mMyContatcsDatabaseReference.push().setValue(searchForContact);
-                }
-            } else {
-                Toast.makeText(this, searchForContact +
-                " is not a registered user", Toast.LENGTH_SHORT).show();
-            }
-        }
-        mSearchContacts.setText("");
     }
 
 

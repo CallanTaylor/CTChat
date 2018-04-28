@@ -5,19 +5,11 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-
-import com.google.firebase.database.ChildEventListener;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 import java.util.List;
 
@@ -25,6 +17,7 @@ public class ContactsRVAdapter extends RecyclerView.Adapter<ContactsRVAdapter.Co
 
     private Context mContext;
     private List<String> mContacts;
+
 
     public ContactsRVAdapter(Context context, List<String> objects) {
         mContext = context;
@@ -40,9 +33,6 @@ public class ContactsRVAdapter extends RecyclerView.Adapter<ContactsRVAdapter.Co
         return viewHolder;
     }
 
-    public String getContact(final int position) {
-        return mContacts.get(position);
-    }
 
     @Override
     public void onBindViewHolder(@NonNull ContactsViewHolder holder, final int position) {
