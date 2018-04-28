@@ -10,15 +10,26 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
 import java.util.List;
 
 public class AddContactRVAdapter extends RecyclerView.Adapter<AddContactRVAdapter.AllUserViewHolder> {
 
 
     private List<String> mUsers;
+    private List<String> mCurrentContacts;
     private Context mContext;
+    private String mMyName;
 
-    public AddContactRVAdapter(Context context, List<String> users) {
+    private FirebaseDatabase mFirebaseDatabase;
+    private DatabaseReference mContactsDatabaseReference;
+
+
+    public AddContactRVAdapter(Context context, List<String> users, List<String> currentContacts, String myName) {
+        mMyName = myName;
+        mCurrentContacts = currentContacts;
         mContext = context;
         mUsers = users;
     }
@@ -40,18 +51,27 @@ public class AddContactRVAdapter extends RecyclerView.Adapter<AddContactRVAdapte
 
             holder.username.setText(mUsers.get(position));
 
+            if (!mCurrentContacts.contains(mUsers.get(position))) {
+                holder.alreadyAddedText.setVisibility(View.INVISIBLE);
+                holder.alreadyAddedIcon.setVisibility(View.INVISIBLE);
+            }
+
             holder.mLayout.setOnClickListener(new View.OnClickListener() {
 
                 @Override
                 public void onClick(View view) {
-                    Class destinationClass = ContactsActivity.class;
+                    Class destinationClass = MainActivity.class;
 
-                    Intent returnToParentActivity = new Intent(mContext, destinationClass);
+                    Intent startChildActivityIntent = new Intent(mContext, destinationClass);
 
-                    if (mUsers.get(position) != null) {
-                        returnToParentActivity.putExtra(Intent.EXTRA_TEXT, mUsers.get(position));
+                    if (mCurrentContacts.contains(mUsers.get(position))) {
+                        startChildActivityIntent.putExtra(Intent.EXTRA_TEXT, mUsers.get(position));
+                        mContext.startActivity(startChildActivityIntent);
+                    } else {
+                        mFirebaseDatabase = FirebaseDatabase.getInstance();
+                        mContactsDatabaseReference = mFirebaseDatabase.getReference().child(mMyName);
+                        mContactsDatabaseReference.push().setValue(mUsers.get(position));
                     }
-                    mContext.startActivity(returnToParentActivity);
                 }
             });
         }
@@ -66,11 +86,15 @@ public class AddContactRVAdapter extends RecyclerView.Adapter<AddContactRVAdapte
 
         TextView username;
         ConstraintLayout mLayout;
+        TextView alreadyAddedIcon;
+        TextView alreadyAddedText;
 
         public AllUserViewHolder(View itemView) {
             super(itemView);
             username = (TextView) itemView.findViewById(R.id.user_displayName);
             mLayout = (ConstraintLayout) itemView.findViewById(R.id.user);
+            alreadyAddedIcon = (TextView) itemView.findViewById(R.id.already_added_icon);
+            alreadyAddedText = (TextView) itemView.findViewById(R.id.already_added_text);
         }
     }
 }

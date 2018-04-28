@@ -1,23 +1,16 @@
 package com.callan.taylor.ctchat;
 
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
-import android.support.v7.widget.helper.ItemTouchHelper;
-import android.util.Log;
+
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,8 +22,6 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
-import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -75,9 +66,6 @@ public class ContactsActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_contacts);
-
-        Intent intentThatStartedThisActivity = getIntent();
-
 
         mFirebaseDatabase = FirebaseDatabase.getInstance();
         mFirebaseAuth = FirebaseAuth.getInstance();
@@ -124,26 +112,24 @@ public class ContactsActivity extends AppCompatActivity {
         };
 
         mSearchView = (SearchView) findViewById(R.id.search_all_contacts);
+        mSearchView.clearFocus();
         mSearchView.setOnQueryTextListener(
                 new SearchView.OnQueryTextListener() {
                     @Override
                     public boolean onQueryTextSubmit(String query) {
-                        mContactsRVAdapter = new ContactsRVAdapter(ContactsActivity.this, mContatcs);
-                        mContactsRV.setAdapter(mContactsRVAdapter);
-                        mRVInfoMessage.setText("Contacts");
                         return false;
                     }
 
                     @Override
                     public boolean onQueryTextChange(String newText) {
+                        mSuggestedUsers.clear();
                         if (!newText.equals("")) {
-                            mSuggestedUsers.clear();
                             for (String username: mAllUsernames) {
                                 if (username.toLowerCase().contains(newText.toLowerCase())) {
                                     mSuggestedUsers.add(username);
                                 }
                             }
-                            mAddContactRVAdapter = new AddContactRVAdapter(ContactsActivity.this, mSuggestedUsers);
+                            mAddContactRVAdapter = new AddContactRVAdapter(ContactsActivity.this, mSuggestedUsers, mContatcs, mUsername);
                             mContactsRV.setAdapter(mAddContactRVAdapter);
                             mRVInfoMessage.setText("All Users");
                         } else {
@@ -193,6 +179,8 @@ public class ContactsActivity extends AppCompatActivity {
         dettachMyContactsDatabaseReadListener();
         dettachUsersDatabaseReadListener();
         dettachAllUsersDatabaseReadListener();
+        mSuggestedUsers.clear();
+        mAllUsernames.clear();
         mUsers.clear();
         mUsername = "";
         mContatcs.clear();
@@ -378,12 +366,14 @@ public class ContactsActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
+        mAllUsernames.clear();
         if (mAuthStateListener != null) {
             mFirebaseAuth.removeAuthStateListener(mAuthStateListener);
         }
         dettachMessagesDatabaseReadListener();
         dettachMyContactsDatabaseReadListener();
         dettachUsersDatabaseReadListener();
+        dettachAllUsersDatabaseReadListener();
     }
 
 
